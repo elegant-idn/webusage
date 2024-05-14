@@ -18,4 +18,4 @@ COPY . .
 EXPOSE 5000
 
 # Define the command to run your app
-CMD ["node", "server.js"]
+CMD ["sh", "-c", "sleep 10 && node server.js"]
