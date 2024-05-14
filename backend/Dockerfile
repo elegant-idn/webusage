@@ -7,6 +7,7 @@ WORKDIR /usr/server
 # Copy package.json and package-lock.json
 COPY package*.json ./
 
+COPY wait-for-it.sh ./
 # Install dependencies
 RUN npm install --production
 
