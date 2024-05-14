@@ -13,6 +13,9 @@ RUN npm install --production
 # Copy the wait-for-it.sh script into the container
 COPY wait-for-it.sh .
 
+# Set executable permissions for wait-for-it.sh
+RUN chmod +x wait-for-it.sh
+
 # Copy the server code into the container
 COPY . .
 
