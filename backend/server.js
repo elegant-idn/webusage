@@ -12,7 +12,7 @@ app.use(bodyParser.json()); // Parse incoming JSON requests
 
 // Set up MySQL database connection
 const db = mysql.createConnection({
-  host: "host.docker.internal", // Use service name defined in docker-compose.yml
+  host: "mysqldb", // Use service name defined in docker-compose.yml
   user: process.env.MYSQLDB_USER,
   password: process.env.MYSQLDB_ROOT_PASSWORD,
   database: process.env.MYSQLDB_DATABASE,
