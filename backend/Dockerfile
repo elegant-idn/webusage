@@ -7,10 +7,11 @@ WORKDIR /usr/server
 # Copy package.json and package-lock.json
 COPY package*.json ./
 
-COPY wait-for-it.sh ./
 # Install dependencies
 RUN npm install --production
 
+# Copy the wait-for-it.sh script into the container
+COPY wait-for-it.sh .
 
 # Copy the server code into the container
 COPY . .
