@@ -10,7 +10,7 @@ services:
     ports:
       - $REACT_LOCAL_PORT:$REACT_DOCKER_PORT
     networks:
-      - frontend
+      - app-network
 
   backend-app:
     build: ./backend
@@ -21,8 +21,7 @@ services:
     depends_on:
       - mysqldb
     networks:
-      - backend
-      - frontend
+      - app-network
 
   mysqldb:
     image: mysql:8.0
@@ -36,11 +35,12 @@ services:
     volumes:
       - db:/var/lib/mysql
     networks:
-      - backend
+      - app-network
 
 volumes:
   db:
+    driver: local
 
 networks:
-  backend:
-  frontend:
+  app-network:
+    driver: bridge
