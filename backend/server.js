@@ -1,4 +1,5 @@
 // Import required modules
+require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const mysql = require("mysql");
@@ -11,10 +12,10 @@ app.use(bodyParser.json()); // Parse incoming JSON requests
 
 // Set up MySQL database connection
 const db = mysql.createConnection({
-  host: "localhost", // Database host
-  user: "root", // Database username
-  password: "", // Database password
-  database: "webusage", // Database name
+  host: "mysqldb", // Use service name defined in docker-compose.yml
+  user: process.env.MYSQLDB_USER,
+  password: process.env.MYSQLDB_ROOT_PASSWORD,
+  database: process.env.MYSQLDB_DATABASE,
   connectionLimit: 10,
 });
 
