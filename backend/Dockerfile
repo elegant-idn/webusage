@@ -23,4 +23,4 @@ COPY . .
 EXPOSE 5000
 
 # Define the command to run your app
-CMD ["node", "server.js"]
+CMD ["./wait-for-it.sh", "mysql:3306", "--", "node", "server.js"]
