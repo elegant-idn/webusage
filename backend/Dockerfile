@@ -10,6 +10,9 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install --production
 
+# Add this line to ensure compatibility
+RUN npm rebuild sqlite3
+
 # Copy the server code into the container
 COPY . .
 
