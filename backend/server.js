@@ -1,7 +1,7 @@
 // Import required modules
 const express = require("express");
 const bodyParser = require("body-parser");
-const sqlite3 = require("sqlite3").verbose();
+const mysql = require("mysql");
 const cors = require("cors");
 
 // Initialize Express app
@@ -9,39 +9,54 @@ const app = express();
 app.use(cors()); // Enable Cross-Origin Resource Sharing (CORS)
 app.use(bodyParser.json()); // Parse incoming JSON requests
 
-// Initialize SQLite in-memory database
-const db = new sqlite3.Database(":memory:", (err) => {
+// Set up MySQL database connection
+const db = mysql.createConnection({
+  host: "localhost", // Database host
+  user: "root", // Database username
+  password: "", // Database password
+  database: "webusage", // Database name
+  connectionLimit: 10,
+});
+
+db.connect((err) => {
   if (err) {
-    console.error("Error connecting to database:", err.message);
+    console.error("Error connecting to MySQL database:", err.message);
   } else {
-    console.log("Connected to the in-memory SQLite database.");
+    console.log("Connected to the MySQL database.");
   }
 });
 
 // Create table if it doesn't exist
-db.run(
-  "CREATE TABLE IF NOT EXISTS usage_data (id INTEGER PRIMARY KEY, username TEXT, device TEST, url TEXT, duration INTEGER, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP)",
-  (err) => {
-    if (err) {
-      console.error("Error creating table:", err.message);
-    } else {
-      console.log("Table created or already exists.");
-    }
+const createTableQuery = `
+  CREATE TABLE IF NOT EXISTS usage_data (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255),
+    device VARCHAR(255),
+    url VARCHAR(255),
+    duration INT,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+  )`;
+
+db.query(createTableQuery, (err) => {
+  if (err) {
+    console.error("Error creating table:", err.message);
+  } else {
+    console.log("Table created or already exists.");
   }
-);
+});
 
 // Endpoint to insert data
 app.post("/data", (req, res) => {
   const { username, device, url, duration } = req.body;
   const inserted_sql =
     "INSERT INTO usage_data (username, device, url, duration) VALUES (?, ?, ?, ?)";
-  db.run(inserted_sql, [username, device, url, duration], function (err) {
+  db.query(inserted_sql, [username, device, url, duration], function (err) {
     if (err) {
       res.status(500).send(err.message);
     }
 
     const updated_sql = "UPDATE usage_data SET username = ? WHERE device = ?";
-    db.run(updated_sql, [username, device], function (err) {
+    db.query(updated_sql, [username, device], function (err) {
       if (err) {
         res.status(500).send(err.message);
       } else {
@@ -75,7 +90,7 @@ app.get("/data", (req, res) => {
   }
   sql += " ORDER BY timestamp DESC";
 
-  db.all(sql, [], (err, rows) => {
+  db.query(sql, [], (err, rows) => {
     if (err) {
       res.status(500).send(err.message);
     } else {
