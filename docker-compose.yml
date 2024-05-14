@@ -30,7 +30,7 @@ services:
     build: ./backend
     restart: unless-stopped
     env_file: ./.env
-    command: ["/usr/server/wait-for-it.sh", "mysql:3306"]
+    command: ["./wait-for-it.sh", "mysql:3306"]
     ports:
       - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT
     depends_on:
