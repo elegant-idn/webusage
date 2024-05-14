@@ -2,9 +2,9 @@
 FROM node:20-alpine
 
 RUN apk add --no-cache wget \
-  && wget -O /usr/local/bin/dockerize https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz \
-  && tar -C /usr/local/bin -xzvf /usr/local/bin/dockerize \
-  && rm /usr/local/bin/dockerize
+    && wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz \
+    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-v0.6.1.tar.gz \
+    && rm dockerize-linux-amd64-v0.6.1.tar.gz
 
 # Set the working directory
 WORKDIR /usr/server
@@ -23,4 +23,4 @@ COPY . .
 EXPOSE 5000
 
 # Define the command to run your app
-CMD ["dockerize", "-wait", "tcp://mysqldb:3306", "-timeout", "60s", "node", "server.js"]
+CMD ["/usr/local/bin/dockerize", "-wait", "tcp://mysqldb:3306", "-timeout", "60s", "node", "server.js"]
