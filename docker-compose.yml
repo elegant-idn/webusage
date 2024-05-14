@@ -1,23 +1,46 @@
 version: "3.8"
 services:
   react-app:
-    build: ./frontend
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./frontend:/usr/client
-      - /usr/client/node_modules
-    environment:
-      - NODE_ENV=development
+    build:
+      context: ./frontend
+      args:
+        - REACT_APP_API_BASE_URL=$CLIENT_API_BASE_URL
     depends_on:
       - backend-app
+    ports:
+      - $REACT_LOCAL_PORT:$REACT_DOCKER_PORT
+    networks:
+      - frontend
 
   backend-app:
     build: ./backend
+    restart: unless-stopped
+    env_file: ./.env
     ports:
-      - "5000:5000"
-    volumes:
-      - ./backend:/usr/server
-      - /usr/server/node_modules
+      - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT
+    depends_on:
+      - mysqldb
+    networks:
+      - backend
+      - frontend
+
+  mysqldb:
+    image: mysql:8.0
+    restart: unless-stopped
+    env_file: ./.env
     environment:
-      - NODE_ENV=development
+      - MYSQL_ROOT_PASSWORD=$MYSQLDB_ROOT_PASSWORD
+      - MYSQL_DATABASE=$MYSQLDB_DATABASE
+    ports:
+      - $MYSQLDB_LOCAL_PORT:$MYSQLDB_DOCKER_PORT
+    volumes:
+      - db:/var/lib/mysql
+    networks:
+      - backend
+
+volumes:
+  db:
+
+networks:
+  backend:
+  frontend:

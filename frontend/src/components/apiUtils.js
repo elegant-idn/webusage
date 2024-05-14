@@ -3,7 +3,7 @@ import axios from "axios";
 export const fetchData = async (queryParams, setData, setPieDataArray) => {
   try {
     const response = await axios.get(
-      `http://localhost:5000/data${queryParams}`
+      `http://localhost:8080/data${queryParams}`
     );
     setData(response.data);
     setPieDataArray(processData(response.data));

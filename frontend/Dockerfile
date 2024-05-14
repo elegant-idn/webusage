@@ -1,5 +1,5 @@
 # Use an official Node runtime as a parent image
-FROM node:20-alpine
+FROM node:20-alpine as build-stage
 
 # Set the working directory in the container
 WORKDIR /usr/client
@@ -16,11 +16,9 @@ COPY . .
 # Build your app
 RUN npm run build
 
-# Install serve to run the app
-RUN npm install -g serve
+FROM nginx:1.17.0-alpine
 
-# Command to run the app
-CMD ["serve", "-s", "build", "-l", "3000"]
-
-# Expose the port the app runs on
+COPY --from=build-stage /usr/client/build /usr/share/nginx/html
 EXPOSE 3000
+
+CMD nginx -g 'daemon off;'
